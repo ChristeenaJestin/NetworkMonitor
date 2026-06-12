@@ -26,6 +26,23 @@ from detection.icmp_flood_detector import (
 
 from detection.udp_flood_detector import (
     detect_udp_flood
+
+)
+
+from detection.anomaly_detector import (
+    detect_anomalies
+)
+
+from detection.blacklist_checker import (
+    check_blacklisted_ips
+)
+
+from detection.suspicious_ports import (
+    detect_suspicious_ports
+)
+
+from detection.threat_score import (
+    calculate_threat_score
 )
 # ----------------------------------------
 # PAGE CONFIG
@@ -71,16 +88,44 @@ traffic_timeline = get_traffic_timeline()
 
 recent_packets = get_recent_packets()
 
+# Existing Detectors
+
 port_scan_alerts = detect_port_scans()
 
 icmp_alerts = detect_icmp_flood()
 
 udp_alerts = detect_udp_flood()
 
+# Phase 4 Detectors
+
+anomaly_alerts = detect_anomalies()
+
+blacklist_alerts = check_blacklisted_ips()
+
+port_alerts = detect_suspicious_ports()
+
+# Combined Alerts
+
 alerts = (
+
     port_scan_alerts
+
     + icmp_alerts
+
     + udp_alerts
+
+    + anomaly_alerts
+
+    + blacklist_alerts
+
+    + port_alerts
+
+)
+
+# Threat Score
+
+score = calculate_threat_score(
+    alerts
 )
 
 # ----------------------------------------
@@ -205,6 +250,35 @@ st.subheader(
 )
 
 st.json(protocols)
+# ----------------------------------------
+# THREAT SCORE
+# ----------------------------------------
+
+st.divider()
+
+st.subheader(
+    "🛡 Threat Score"
+)
+
+st.progress(
+    score / 100
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.metric(
+        "Threat Score",
+        f"{score}/100"
+    )
+
+with col2:
+
+    st.metric(
+        "Active Alerts",
+        len(alerts)
+    )
 
 # ----------------------------------------
 # SECURITY ALERTS
@@ -225,45 +299,31 @@ if alerts:
             "LOW"
         )
 
+        message = f"""
+Type: {alert.get('type', 'Unknown')}
+
+Source IP: {alert.get('source_ip', 'N/A')}
+
+Count: {alert.get('packet_count', 0)}
+
+Severity: {severity}
+"""
+
         if severity == "CRITICAL":
 
-            st.error(
-
-                f"""
-🚨 {alert['type']}
-
-Source IP:
-{alert['source_ip']}
-
-Packets:
-{alert['packet_count']}
-
-Severity:
-{severity}
-"""
-            )
+            st.error(message)
 
         elif severity == "HIGH":
 
-            st.warning(
+            st.warning(message)
 
-                f"""
-⚠ {alert['type']}
+        elif severity == "MEDIUM":
 
-Source IP:
-{alert['source_ip']}
-
-Packets:
-{alert['packet_count']}
-
-Severity:
-{severity}
-"""
-            )
+            st.info(message)
 
         else:
 
-            st.info(str(alert))
+            st.info(message)
 
 else:
 

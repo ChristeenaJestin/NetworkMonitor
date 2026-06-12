@@ -4,7 +4,7 @@ import pandas as pd
 DB_FILE = "data/netsentry.db"
 
 
-def detect_udp_flood(threshold=100):
+def detect_anomalies():
 
     try:
 
@@ -20,35 +20,32 @@ def detect_udp_flood(threshold=100):
         if df.empty:
             return []
 
-        udp_packets = df[
-            df["protocol"] == "UDP"
-        ]
+        avg_size = df["packet_size"].mean()
 
-        counts = (
-            udp_packets["src_ip"]
-            .value_counts()
-        )
+        threshold = avg_size * 3
+
+        suspicious = df[
+            df["packet_size"] > threshold
+        ]
 
         alerts = []
 
-        for ip, count in counts.items():
+        for _, row in suspicious.iterrows():
 
-            if count > threshold:
+            alerts.append({
 
-                alerts.append({
+                "type": "Traffic Anomaly",
 
-                    "type": "UDP Flood",
+                "source_ip": row["src_ip"],
 
-                    "source_ip": ip,
+                "packet_count": row["packet_size"],
 
-                    "packet_count": int(count),
+                "severity": "MEDIUM"
 
-                    "severity": "HIGH"
-
-                })
+            })
 
         return alerts
 
-    except Exception:
+    except:
 
         return []

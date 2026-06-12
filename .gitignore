@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+
+data/netsentry.db
+
+.env
+venv/
+.venv/
+
+.streamlit/
+
+*.log
+
+reports/exports/*.pdf
