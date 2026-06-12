@@ -7,7 +7,8 @@ from core.traffic_analyzer import (
     get_protocol_counts,
     get_top_ips,
     get_traffic_timeline,
-    get_recent_packets
+    get_recent_packets,
+    get_unique_port_count
 )
 
 from dashboard.charts import (
@@ -54,6 +55,18 @@ from reports.report_generator import (
 from utils.alert_logger import (
     save_alerts
 )
+
+from ai.threat_explainer import (
+    explain_alert
+)
+
+from ai.recommendation_engine import (
+    recommend_action
+)
+
+from ml.threat_classifier import (
+    classify_threat
+)
 # ----------------------------------------
 # PAGE CONFIG
 # ----------------------------------------
@@ -88,15 +101,24 @@ st_autorefresh(
 # LOAD DATA
 # ----------------------------------------
 
+
+
+traffic_timeline = get_traffic_timeline()
+
+recent_packets = get_recent_packets()
+
 total_packets = get_total_packets()
 
 protocols = get_protocol_counts()
 
 top_ips = get_top_ips()
 
-traffic_timeline = get_traffic_timeline()
+unique_ports = get_unique_port_count()
 
-recent_packets = get_recent_packets()
+ml_result = classify_threat(
+    total_packets,
+    unique_ports
+)
 
 # Existing Detectors
 
@@ -296,6 +318,59 @@ with col2:
         len(alerts)
     )
 
+# ----------------------------------------
+# MACHINE LEARNING ANALYSIS
+# ----------------------------------------
+
+st.divider()
+
+st.subheader(
+    "🤖 Machine Learning Analysis"
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.metric(
+        "Unique Ports",
+        unique_ports
+    )
+
+with col2:
+
+    st.metric(
+        "Packets Analysed",
+        total_packets
+    )
+
+if ml_result["ml_threat"]:
+
+    st.error(
+        f"""
+🚨 ML Threat Detected
+
+Severity:
+{ml_result['severity']}
+
+Packet Count:
+{total_packets}
+
+Unique Ports:
+{unique_ports}
+"""
+    )
+
+else:
+
+    st.success(
+        """
+✅ No ML Threat Detected
+
+Traffic appears normal.
+"""
+    )
+
 
 # ----------------------------------------
 # REPORTS
@@ -383,6 +458,16 @@ if alerts:
 
     for alert in alerts:
 
+        analysis = explain_alert(
+            alert
+        )
+
+        recommendation = (
+            recommend_action(
+                alert
+            )
+        )
+
         severity = alert.get(
             "severity",
             "LOW"
@@ -393,26 +478,40 @@ Type: {alert.get('type', 'Unknown')}
 
 Source IP: {alert.get('source_ip', 'N/A')}
 
-Count: {alert.get('packet_count', 0)}
+Packets: {alert.get('packet_count', 0)}
 
 Severity: {severity}
+
+AI Analysis:
+{analysis}
+
+Recommended Action:
+{recommendation}
 """
 
         if severity == "CRITICAL":
 
-            st.error(message)
+            st.error(
+                message
+            )
 
         elif severity == "HIGH":
 
-            st.warning(message)
+            st.warning(
+                message
+            )
 
         elif severity == "MEDIUM":
 
-            st.info(message)
+            st.info(
+                message
+            )
 
         else:
 
-            st.info(message)
+            st.success(
+                message
+            )
 
 else:
 

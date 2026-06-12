@@ -93,3 +93,26 @@ def get_recent_packets(limit=20):
         return pd.DataFrame()
 
     return df.tail(limit)
+
+
+def get_unique_port_count():
+
+    conn = sqlite3.connect(DB_FILE)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT COUNT(DISTINCT dst_port)
+        FROM packets
+        """
+    )
+
+    result = cursor.fetchone()
+
+    conn.close()
+
+    if result and result[0]:
+        return result[0]
+
+    return 0
