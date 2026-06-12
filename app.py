@@ -44,6 +44,16 @@ from detection.suspicious_ports import (
 from detection.threat_score import (
     calculate_threat_score
 )
+
+import pandas as pd
+
+from reports.report_generator import (
+    generate_pdf_report
+)
+
+from utils.alert_logger import (
+    save_alerts
+)
 # ----------------------------------------
 # PAGE CONFIG
 # ----------------------------------------
@@ -120,6 +130,12 @@ alerts = (
 
     + port_alerts
 
+)
+
+save_alerts(alerts)
+
+pdf_file = generate_pdf_report(
+    alerts
 )
 
 # Threat Score
@@ -278,6 +294,79 @@ with col2:
     st.metric(
         "Active Alerts",
         len(alerts)
+    )
+
+
+# ----------------------------------------
+# REPORTS
+# ----------------------------------------
+
+st.divider()
+
+st.subheader(
+    "📄 Reports"
+)
+
+try:
+
+    with open(
+        pdf_file,
+        "rb"
+    ) as file:
+
+        st.download_button(
+            label="📥 Download PDF Report",
+            data=file,
+            file_name="security_report.pdf",
+            mime="application/pdf"
+        )
+
+except:
+    pass
+
+try:
+
+    with open(
+        "data/alerts.csv",
+        "rb"
+    ) as file:
+
+        st.download_button(
+            label="📥 Download Alert History",
+            data=file,
+            file_name="alerts.csv",
+            mime="text/csv"
+        )
+
+except:
+    pass
+
+
+# ----------------------------------------
+# ALERT HISTORY
+# ----------------------------------------
+
+st.divider()
+
+st.subheader(
+    "📜 Alert History"
+)
+
+try:
+
+    history = pd.read_csv(
+        "data/alerts.csv"
+    )
+
+    st.dataframe(
+        history.tail(50),
+        use_container_width=True
+    )
+
+except:
+
+    st.info(
+        "No alert history available."
     )
 
 # ----------------------------------------
