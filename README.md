@@ -1,68 +1,105 @@
 # NetSentry AI
 
-NetSentry AI is a network monitoring and intrusion detection dashboard built using Python.
+NetSentry AI is a real-time network monitoring and intrusion detection system developed using Python, Scapy, SQLite, Streamlit, and Machine Learning.
 
-The project captures live network packets, stores them in a SQLite database, analyzes traffic patterns, and displays the results through a Streamlit dashboard. It also includes basic threat detection features such as port scan detection, ICMP flood detection, and UDP flood detection.
+The project captures live network packets, analyzes traffic patterns, detects suspicious activities, and presents security insights through an interactive dashboard.
 
-## Features
+---
 
-* Live packet capture using Scapy
-* Protocol analysis (TCP, UDP, ICMP)
-* Source and destination IP monitoring
-* Traffic statistics and visualizations
-* Top source IP analysis
-* Live packet feed
-* Port scan detection
-* ICMP flood detection
-* UDP flood detection
-* SQLite-based packet storage
+# Project Overview
 
-## Technologies Used
+The goal of NetSentry AI is to provide a lightweight security monitoring platform capable of:
 
-* Python
-* Scapy
-* SQLite
-* Pandas
-* Plotly
-* Streamlit
+- Capturing live network traffic
+- Monitoring network activity in real time
+- Detecting suspicious behavior
+- Identifying common network attacks
+- Generating security reports
+- Applying machine learning for threat analysis
 
-## Project Structure
+The system combines packet analysis, rule-based detection, and machine learning techniques to improve network visibility and security awareness.
 
-NetworkMonitor/
+---
 
-├── core/               Packet capture and analysis
+# Features
 
-├── dashboard/          Dashboard visualizations
+### Network Monitoring
 
-├── detection/          Threat detection modules
+- Real-time packet capture using Scapy
+- Traffic storage using SQLite
+- Live packet feed dashboard
+- Protocol monitoring (TCP, UDP, ICMP)
 
-├── database/           Database utilities
+### Traffic Analytics
 
-├── reports/            Report generation
+- Protocol distribution charts
+- Top source IP analysis
+- Network traffic timeline
+- Packet statistics dashboard
 
-├── tests/              Testing scripts
+### Threat Detection
 
-├── utils/              Helper functions
+- Port Scan Detection
+- ICMP Flood Detection
+- UDP Flood Detection
+- Suspicious Port Monitoring
+- Blacklisted IP Detection
+- Traffic Anomaly Detection
 
-├── app.py              Main Streamlit application
+### Threat Scoring
 
-└── packet_capture_runner.py
+- Dynamic threat score calculation
+- Active alert tracking
+- Security risk visualization
 
-## Running the Project
+### Machine Learning
 
-Install dependencies:
+- ML-based traffic classification
+- Threat prediction model
+- Automated threat assessment
 
-pip install -r requirements.txt
+### Reporting
 
-Start packet capture:
+- PDF security report generation
+- Alert history export
+- Historical threat tracking
 
-python packet_capture_runner.py
+---
 
-Launch dashboard:
+# Architecture
 
-streamlit run app.py
-
-## Current Status
-
-The current version supports packet capture, traffic analysis, dashboard visualization, and basic intrusion detection. Future work includes threat intelligence feeds, geographic IP visualization, anomaly detection, and automated report generation.
-
+```text
+NetSentry AI
+│
+├── app.py
+│
+├── core/
+│   ├── packet_sniffer.py
+│   ├── packet_parser.py
+│   └── traffic_analyzer.py
+│
+├── detection/
+│   ├── port_scan_detector.py
+│   ├── icmp_flood_detector.py
+│   ├── udp_flood_detector.py
+│   ├── anomaly_detector.py
+│   ├── blacklist_checker.py
+│   └── threat_score.py
+│
+├── dashboard/
+│   ├── charts.py
+│   ├── metrics.py
+│   └── tables.py
+│
+├── ml/
+│   ├── train_model.py
+│   ├── threat_classifier.py
+│   └── training_data.csv
+│
+├── ai/
+│
+├── reports/
+│
+├── data/
+│
+└── assets/
