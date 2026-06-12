@@ -12,3 +12,7 @@ venv/
 *.log
 
 reports/exports/*.pdf
+
+*.db
+data/
+database/
