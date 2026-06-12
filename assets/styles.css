@@ -1,0 +1,55 @@
+/* Main Background */
+
+.stApp {
+    background-color: #050816;
+    color: white;
+}
+
+/* Headers */
+
+h1 {
+    color: #00e5ff !important;
+    font-weight: 700;
+}
+
+h2, h3 {
+    color: #ffffff !important;
+}
+
+/* Metrics */
+
+[data-testid="metric-container"] {
+
+    background-color: #111827;
+
+    border: 1px solid #1f2937;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    box-shadow: 0px 0px 10px rgba(0,229,255,0.15);
+}
+
+/* Tables */
+
+[data-testid="stDataFrame"] {
+
+    background-color: #111827;
+
+    border-radius: 10px;
+}
+
+/* Alert Boxes */
+
+.stAlert {
+
+    border-radius: 12px;
+}
+
+/* Divider */
+
+hr {
+
+    border-color: #1f2937;
+}

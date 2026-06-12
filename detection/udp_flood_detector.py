@@ -49,6 +49,10 @@ def detect_udp_flood(threshold=100):
 
         return alerts
 
-    except Exception:
+    except Exception as e:
+
+        print(
+            f"UDP Flood Detection Error: {e}"
+        )
 
         return []

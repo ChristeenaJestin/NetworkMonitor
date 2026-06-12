@@ -4,7 +4,7 @@ import pandas as pd
 DB_FILE = "data/netsentry.db"
 
 
-def detect_udp_flood(threshold=100):
+def detect_icmp_flood(threshold=50):
 
     try:
 
@@ -20,12 +20,12 @@ def detect_udp_flood(threshold=100):
         if df.empty:
             return []
 
-        udp_packets = df[
-            df["protocol"] == "UDP"
+        icmp_packets = df[
+            df["protocol"] == "ICMP"
         ]
 
         counts = (
-            udp_packets["src_ip"]
+            icmp_packets["src_ip"]
             .value_counts()
         )
 
@@ -37,13 +37,13 @@ def detect_udp_flood(threshold=100):
 
                 alerts.append({
 
-                    "type": "UDP Flood",
+                    "type": "ICMP Flood",
 
                     "source_ip": ip,
 
                     "packet_count": int(count),
 
-                    "severity": "HIGH"
+                    "severity": "CRITICAL"
 
                 })
 
